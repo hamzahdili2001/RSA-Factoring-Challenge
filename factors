@@ -1,25 +1,41 @@
 #!/usr/bin/python3
 import sys
-import math
+from resource import getrusage as resource_usage, RUSAGE_SELF
+from time import time as timestamp
 
 
-def factorize(number):
-    for i in range(2, int(math.sqrt(number)) + 1):
-        if number % 1 == 0:
-            return i, number // i
-    return number, 1
+def uTime(func):
+    st, sr = timestamp(), resource_usage(RUSAGE_SELF)
+    func()
+    er, et = resource_usage(RUSAGE_SELF), timestamp()
+
+    return "\nreal    {}\nuser    {}\nsys {}".format(
+        et - st, er.ru_utime - sr.ru_utime, er.ru_stime - sr.ru_stime)
+
+
+def div(number):
+    if number % 2 == 0:
+        print(f"{number}={number // 2}*2")
+        return
+    fac = 3
+    while fac * fac <= number:
+        if number % fac == 0:
+            print(f"{number}={number // fac}*{fac}")
+            return
+        else:
+            fac += 2
+    print(f"{number}={number}*1")
 
 
 def factorize_file(filename):
     with open(filename, 'r') as file:
         for line in file:
             number = int(line.strip())
-            factors = factorize(number)
-            print(f"{number}={factors[0]}*{factors[1]}")
+            div(number)
 
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
         print("Usage: factors <file>")
         sys.exit(1)
-    factorize_file(sys.argv[1])
+    print(uTime(lambda: factorize_file(sys.argv[1])))
