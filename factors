@@ -26,7 +26,11 @@ if __name__ == '__main__':
         sys.exit()
 
     with open(sys.argv[1], 'r') as f:
-        numbers = [int(line.strip()) for line in f.readlines()]
+        numbers = []
+        for line in f:
+            line = line.strip()
+            if line:
+                numbers.append(int(line))
 
     max_number = max(numbers)
     primes = sieve(int(max_number**0.5) + 1)
