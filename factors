@@ -21,14 +21,13 @@ def process_file(filename):
                 number = int(line.strip())
                 factors = factorize(number)
                 if factors:
-                    print(f"{number}={factors[1]}*{factors[0]}")
-    except FileNotFoundError:
-        print("File not found:", filename)
+                    print("{:.0f}={:.0f}*{:.0f}".format(number, factors[1], factors[0]))
+    except:
+        pass
 
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
-        print("Usage: factors <file>")
         exit()
 
     process_file(sys.argv[1])
