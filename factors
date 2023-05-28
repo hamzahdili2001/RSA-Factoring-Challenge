@@ -2,32 +2,20 @@
 import sys
 
 
-def factorize(number):
-    i = 2
-
-    if number < 2:
-        return
-
-    while number % i != 0:
-        i += 1
-
-    return i, number // i
-
-
-def process_file(filename):
-    try:
-        with open(filename) as file:
-            for line in file:
-                number = int(line.strip())
-                factors = factorize(number)
-                if factors:
-                    print("{:.0f}={:.0f}*{:.0f}".format(number, factors[1], factors[0]))
-    except:
-        pass
+def factorize(n):
+    for i in range(2, int(n**0.5) + 1):
+        if n % i == 0:
+            return i, n // i
+    return None
 
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
-        exit()
+        sys.exit(1)
 
-    process_file(sys.argv[1])
+    with open(sys.argv[1], 'r') as f:
+        numbers = [int(line.strip()) for line in f.readlines()]
+    for n in numbers:
+        factors = factorize(n)
+        if factors is not None:
+            print('{}={}*{}'.format(n, factors[1], factors[0]))
