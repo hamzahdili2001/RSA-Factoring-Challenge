@@ -42,4 +42,4 @@ if __name__ == '__main__':
 
     factors = factorize(n, primes)
 
-    print(f'{n}={factors[0]}*{factors[1]}')
+    print(f'{n}={factors[1]}*{factors[0]}')
