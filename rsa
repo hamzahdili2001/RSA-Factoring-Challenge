@@ -1,72 +1,39 @@
-#!/usr/bin/python3
+#!/usr/bin/env bash
 
-import sys
-import math
-import random
+calculate_product() {
+  if [ $# -ne 3 ]; then
+    args=("$@")
+    count=0
+    num2=1
+    for a in "${args[@]}"; do
+      if [ $count -gt 1 ]; then
+        num2=$(echo "$a * $num2" | bc)
+      fi
+      count=$((count + 1))
+    done
+  else
+    num2=$3
+  fi
 
+  num1=$2
+  num=$(echo "$1" | tr ':' '=')
 
-def gcd(a, b):
-    """
-    Compute the greatest common divisor of two numbers.
-    """
-    while b != 0:
-        a, b = b, a % b
-    return a
+  result=$(echo "if($num2 > $num1) 1 else 0" | bc)
+  if ((result == 1)); then
+    numcp=$num1
+    num1=$num2
+    num2=$numcp
+  fi
 
+  echo "$num$num1*$num2"
+}
 
-def rho_factorize(n):
-    """
-    Factorize the given number n using Pollard's rho algorithm.
-    """
-    if n % 2 == 0:
-        return 2
-
-    x = random.randint(1, n - 1)
-    y = x
-    c = random.randint(1, n - 1)
-    d = 1
-
-    def f(x):
-        return (x**2 + c) % n
-
-    while d == 1:
-        x = f(x)
-        y = f(f(y))
-        d = gcd(abs(x - y), n)
-
-    return d
-
-
-def factorize(n):
-    """
-    Factorize the given number n into prime factors.
-    """
-    factors = []
-    while n % 2 == 0:
-        factors.append(2)
-        n //= 2
-
-    while n != 1:
-        factor = rho_factorize(n)
-        factors.append(factor)
-        n //= factor
-
-    return factors
-
-
-if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        sys.exit(1)
-
-    with open(sys.argv[1], 'r') as f:
-        n = int(f.readline().strip())
-
-    prime_factors = factorize(n)
-
-    result = f'{n}='
-    for i, factor in reversed(list(enumerate(prime_factors))):
-        result += str(factor)
-        if i > 0:
-            result += '*'
-
-    print(result)
+if [ $# -ne 1 ]; then
+  echo 'Usage: factorize <file>'
+  exit 1
+else
+  while read -r number; do
+    result=$(factor "$number")
+    calculate_product $result
+  done < "$1"
+fi
