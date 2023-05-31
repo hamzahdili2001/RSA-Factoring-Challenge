@@ -1,0 +1,45 @@
+#!/usr/bin/python3
+import sys
+
+
+def sieve(n):
+    """
+    Generate all prime numbers up to n using the Sieve of Eratosthenes.
+    """
+    primes = [True] * (n + 1)
+    primes[0] = primes[1] = False
+    for i in range(2, int(n**0.5) + 1):
+        if primes[i]:
+            for j in range(i**2, n + 1, i):
+                primes[j] = False
+    return [i for i in range(2, n + 1) if primes[i]]
+
+
+def factorize(n, primes):
+    """
+    Find the prime factors of n using the given list of prime numbers.
+    """
+    factors = []
+    for p in primes:
+        if p*p > n:
+            break
+        while n % p == 0:
+            factors.append(p)
+            n //= p
+    if n > 1:
+        factors.append(n)
+    return factors
+
+
+if __name__ == '__main__':
+    if len(sys.argv) != 2:
+        sys.exit(1)
+
+    with open(sys.argv[1], 'r') as f:
+        n = int(f.readline().strip())
+
+    primes = sieve(int(n**0.5) + 1)
+
+    factors = factorize(n, primes)
+
+    print(f'{n}={factors[0]}*{factors[1]}')
