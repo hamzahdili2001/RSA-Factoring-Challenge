@@ -1,33 +1,56 @@
 #!/usr/bin/python3
+
 import sys
+import math
+import random
 
 
-def sieve(n):
+def gcd(a, b):
     """
-    Generate all prime numbers up to n using the Sieve of Eratosthenes.
+    Compute the greatest common divisor of two numbers.
     """
-    primes = [True] * (n + 1)
-    primes[0] = primes[1] = False
-    for i in range(2, int(n**0.5) + 1):
-        if primes[i]:
-            for j in range(i**2, n + 1, i):
-                primes[j] = False
-    return [i for i in range(2, n + 1) if primes[i]]
+    while b != 0:
+        a, b = b, a % b
+    return a
 
 
-def factorize(n, primes):
+def rho_factorize(n):
     """
-    Find the prime factors of n using the given list of prime numbers.
+    Factorize the given number n using Pollard's rho algorithm.
+    """
+    if n % 2 == 0:
+        return 2
+
+    x = random.randint(1, n - 1)
+    y = x
+    c = random.randint(1, n - 1)
+    d = 1
+
+    def f(x):
+        return (x**2 + c) % n
+
+    while d == 1:
+        x = f(x)
+        y = f(f(y))
+        d = gcd(abs(x - y), n)
+
+    return d
+
+
+def factorize(n):
+    """
+    Factorize the given number n into prime factors.
     """
     factors = []
-    for p in primes:
-        if p*p > n:
-            break
-        while n % p == 0:
-            factors.append(p)
-            n //= p
-    if n > 1:
-        factors.append(n)
+    while n % 2 == 0:
+        factors.append(2)
+        n //= 2
+
+    while n != 1:
+        factor = rho_factorize(n)
+        factors.append(factor)
+        n //= factor
+
     return factors
 
 
@@ -38,8 +61,12 @@ if __name__ == '__main__':
     with open(sys.argv[1], 'r') as f:
         n = int(f.readline().strip())
 
-    primes = sieve(int(n**0.5) + 1)
+    prime_factors = factorize(n)
 
-    factors = factorize(n, primes)
+    result = f'{n}='
+    for i, factor in enumerate(prime_factors):
+        result += str(factor)
+        if i < len(prime_factors) - 1:
+            result += '*'
 
-    print(f'{n}={factors[1]}*{factors[0]}')
+    print(result)
