@@ -64,9 +64,9 @@ if __name__ == '__main__':
     prime_factors = factorize(n)
 
     result = f'{n}='
-    for i, factor in enumerate(prime_factors):
+    for i, factor in reversed(list(enumerate(prime_factors))):
         result += str(factor)
-        if i < len(prime_factors) - 1:
+        if i > 0:
             result += '*'
 
     print(result)
