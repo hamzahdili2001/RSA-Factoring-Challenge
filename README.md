@@ -82,3 +82,38 @@ Executed in   60.85 millis    fish           external
    usr time  100.12 millis   99.00 micros  100.02 millis
    sys time   17.99 millis  153.00 micros   17.83 millis
 ```
+
+## RSA Factoring Challenge
+RSA Laboratories states that: for each RSA number `n`, there exist prime numbers `p` and `q` such that
+
+`n = p × q`. The problem is to find these two primes, given only `n`.
+
+This task is the same as `task 0`, except:
+
+`p` and `q` are always prime numbers
+There is only one number in the files
+
+### Usage:
+```bash
+rsa <file>
+```
+
+#### Simple Inputs and Outputs
+```bash
+$ cat tests/rsa1
+6
+$ ./rsa tests/rsa1
+6=3*2
+$ cat tests/rsa2
+77
+$ ./rsa tests/rsa2
+77=11*7
+$ cat tests/rsa3
+239821585064027
+$ ./rsa tests/rsa3
+239821585064027=15486481*15485867
+$ cat tests/rsa4
+2497885147362973
+$ ./rsa tests/rsa4
+2497885147362973=49979141*49978553
+```
