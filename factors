@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+# Define the paths to the local binaries
+BC_PATH="./binary/bc"
+DC_PATH="./binary/dc"
+
+calculate_product() {
+  if [ $# -ne 3 ]; then
+    args=("$@")
+    count=0
+    num2=1
+    for a in "${args[@]}"; do
+      if [ $count -gt 1 ]; then
+        num2=$("$BC_PATH" -l <<< "$a * $num2")
+      fi
+      count=$((count + 1))
+    done
+  else
+    num2=$3
+  fi
+
+  num1=$2
+  num=$(echo "$1" | tr ':' '=')
+
+  result=$("$BC_PATH" <<< "$num2 > $num1")
+  if ((result == 1)); then
+    numcp=$num1
+    num1=$num2
+    num2=$numcp
+  fi
+
+  echo "$num$num1*$num2"
+}
+
+if [ $# -ne 1 ]; then
+  echo 'Usage: factorize <file>'
+  exit 1
+else
+  while read -r line; do
+    result=$(factor "$line")
+    calculate_product $result
+  done < "$1"
+fi
+
